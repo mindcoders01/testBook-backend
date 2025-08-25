@@ -1,21 +1,21 @@
-require("dotenv").config();
-const express = require("express");
-const cors = require("cors");
-const cookieParser = require("cookie-parser");
+require('dotenv').config()
+const express = require('express')
+const cookieParser = require('cookie-parser')
+const cors = require('cors')
+const ApiRoutes = require('./routes/ApiRoutes')
+const {connectDB} = require('./DB/databaseConnection')
+const app = express()
 
-const apiRouter = require("./routes/ApiRoutes");
+const PORT = process.env.PORT
 
-const server = express();
+app.use(cors())
+app.use(cookieParser())
+app.use(express.json())
+app.use(express.urlencoded({ extended: false }));
 
-// middlewares
-server.use(cors);
-server.use(express.json());
-server.use(cookieParser());
+app.use('/api',ApiRoutes)
 
-server.use("/", apiRouter);
-
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, (err) => {
-  if (err) console.log(err.message);
-  console.log(`server is running.. http://localhost:${PORT}`);
-});
+app.listen(PORT,()=>{
+     connectDB()
+    console.log(`server is running on port http://localhost:${PORT}`)
+})
