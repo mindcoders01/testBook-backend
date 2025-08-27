@@ -1,8 +1,9 @@
 const Student = require("../model/studentModel");
 const ApiResponse = require("../utils/ApiResponse");
-const generateTokens = require("../config/generateJwtTokens");
 
-const handleGetById = async (req, res) => {
+const { generateJwtToken } = require("../config/jwtToken");
+
+const studentGetById = async (req, res) => {
   try {
     const { id } = req.params;
     const student = await Student.findById({ _id: id }).select("-password");
@@ -15,7 +16,7 @@ const handleGetById = async (req, res) => {
       .json(new ApiResponse(false, null, "Not Able to fetch Student"));
   }
 };
-const handleRegister = async (req, res) => {
+const studentRegister = async (req, res) => {
   try {
     const {
       name,
@@ -31,11 +32,13 @@ const handleRegister = async (req, res) => {
     } = req.body;
 
     const existingStudent = await Student.findOne({ email });
+
     if (existingStudent) {
       return res
         .status(400)
         .json(new ApiResponse(false, null, "Student Already Resistered"));
     }
+
     const student = await Student.create({
       name,
       email,
@@ -48,21 +51,17 @@ const handleRegister = async (req, res) => {
       role,
       attemps,
     });
-
+    console.log("running5");
     await student.save();
     res
       .status(201)
       .json(new ApiResponse(true, student, "Student Registered Succefully"));
   } catch (error) {
-    res
-      .status(500)
-      .json(
-        new ApiResponse(false, null, "Can't able to register student", 500)
-      );
+    res.status(500).json(new ApiResponse(false, null, error.message, 500));
   }
 };
 
-const handlelogin = async (req, res) => {
+const studentLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
     const oneStudent = await Student.findOne({ email });
@@ -78,7 +77,10 @@ const handlelogin = async (req, res) => {
         .status(500)
         .json(new ApiResponse(false, null, "Wrong Password", 500));
 
-    const token = await generateTokens();
+    let studentDetails = { ...oneStudent._doc };
+    delete studentDetails.password;
+
+    const token = await generateJwtToken(studentDetails);
     res.cookie("token", token, {
       httpOnly: true,
       secure: false,
@@ -89,13 +91,11 @@ const handlelogin = async (req, res) => {
       .status(200)
       .json(new ApiResponse(200, oneStudent, "user loggedIN succefully"));
   } catch (error) {
-    res
-      .status(500)
-      .json(new ApiResponse(false, null, "Can't able to login student", 500));
+    res.status(500).json(new ApiResponse(false, null, error.message, 500));
   }
 };
 
-const handleGetAll = async (req, res) => {
+const studentsGetAll = async (req, res) => {
   try {
     const students = await Student.find();
     res
@@ -108,15 +108,16 @@ const handleGetAll = async (req, res) => {
   }
 };
 
-const handleDeleteById = async (req, res) => {
+const studentDeleteById = async (req, res) => {
   try {
-    const studentId = req.params.id;
-    const isExist = await Student.findById({ _id: studentId });
-    if (!isExist)
+  
+    const deleted = await Student.findByIdAndDelete( req.params.id)
+    if(!deleted){
       return res
         .status(404)
         .json(new ApiResponse(false, null, "Provide Valid Student Id", 404));
-    const deleted = await Student.findByIdAndDelete({ _id: studentId });
+
+    }
     res
       .status(200)
       .json(new ApiResponse(200, deleted, "Student Deleted Successfully"));
@@ -127,35 +128,36 @@ const handleDeleteById = async (req, res) => {
   }
 };
 
-const handleUpdateById = async (req, res) => {
-   try {
-    const studentId = req.params.id;
-    const updates = req.body
-    const isExist = await Student.findById({ _id: studentId });
-    if (!isExist)
+const studentUpdateById = async (req, res) => {
+  try {
+    const updates = req.body;
+
+    const updated = await Student.findByIdAndUpdate(
+      req.params.id,
+      { $set: updates },
+      { new: true, runValidators: true }
+    );
+    if (!updated) {
       return res
         .status(404)
         .json(new ApiResponse(false, null, "Provide Valid Student Id", 404));
-        const updated = await Student.findByIdAndUpdate({_id:studentId},{$set:updates},{new:true,runValidators:true})
-        res
+    }
+
+    res
       .status(200)
       .json(new ApiResponse(200, updated, "Student updated Successfully"));
-       
-
-}catch(error){
+  } catch (error) {
     res
       .status(500)
       .json(new ApiResponse(false, null, "Can't able to update user", 500));
-}
-
-}
-
+  }
+};
 
 module.exports = {
-  handleGetById,
-  handleRegister,
-  handlelogin,
-  handleGetAll,
-  handleDeleteById,
-  handleUpdateById
+  studentDeleteById,
+  studentLogin,
+  studentRegister,
+  studentUpdateById,
+  studentGetById,
+  studentsGetAll,
 };

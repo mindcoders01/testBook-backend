@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
-const bcrypt = require('bcrypt')
+const bcrypt = require("bcrypt");
+const { generateRefcode } = require("../utils/referralGenerator");
 const studentSchema = new mongoose.Schema(
   {
     name: {
@@ -54,24 +55,27 @@ const studentSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+
+
+
 //pre middleware
-studentSchema.pre('save',async function(next){
-    if(!this.isModified('password')) return  next();
-    try{
-        const salt = await bcrypt.genSalt(10); 
-        this.password = await bcrypt.hash(this.password,salt);
-        next();
-    }catch(err){
-        next(err);
-    }
+studentSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
+
+  try {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+     this.referralCode = generateRefcode()
+    next();
+  } catch (err) {
+    next(err);
+  }
 });
 
 // Instance method -> password compare(for login)
-studentSchema.methods.comparePassword = async function(enteredPassword){
-  //  console.log("yahdh ",this.password)
-    return await bcrypt.compare(enteredPassword,this.password);
-}
-
+studentSchema.methods.comparePassword = async function (enteredPassword) {
+  return await bcrypt.compare(enteredPassword, this.password);
+};
 
 const student = mongoose.model("student", studentSchema);
 module.exports = student;

@@ -59,15 +59,13 @@ const loginAdmin = async (req, res) => {
     let findAdmin = await AdminModel.findOne({ email });
     if (!findAdmin)
       return res.status(404).json({ message: "Someting went wrong" });
-
     let validPassword = verifyPassword(password, findAdmin.password);
     if (!validPassword)
       return res.status(400).json({ message: "Someting went wrong" });
+    let adminDetails = findAdmin.toObject();
+    delete adminDetails.password;
 
-    const token = await generateJwtToken({
-      id: findAdmin._id,
-      email: findAdmin.email,
-    });
+    const token = await generateJwtToken(adminDetails);
     res.cookie("token", token, {
       httpOnly: true,
       secure: false,
