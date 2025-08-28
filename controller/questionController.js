@@ -13,12 +13,15 @@ const ApiResponse = require('../utils/ApiResponse')
   }
 
     const questionGetAll =async(req,res)=>{
-
+      console.log(req.query)
+      const limit = req.query.limit
+      const  skip = req.query.limit
+      const select = req.query.limit
       
     try{     
-    const allQuestions = await Questions.find()
+    const allQuestions = await Questions.find().query(req.query)
 
-    res.status(200).json(new ApiResponse(true,allQuestions,"Question Successfully Added In Data Base"))
+    res.status(200).json(new ApiResponse(true,allQuestions,"Question Successfully Fetched"))
     }catch(error){
      res.status(500).json(new ApiResponse(false,null,error))
     }
