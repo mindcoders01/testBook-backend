@@ -4,6 +4,6 @@ const router = express.Router()
 
 
 
-router.get('/all',studentsGetAll)
+router.get('/',studentsGetAll)
 
 module.exports = router
