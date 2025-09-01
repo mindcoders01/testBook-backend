@@ -3,7 +3,6 @@ const ApiResponse = require("../utils/ApiResponse");
 
 const { generateJwtToken } = require("../config/jwtToken");
 
-
 const studentRegister = async (req, res) => {
   try {
     const {
@@ -26,10 +25,10 @@ const studentRegister = async (req, res) => {
         .status(400)
         .json(new ApiResponse(false, null, "Student Already Resistered"));
     }
-    let profilePath = null;
-    if(req.file){
-      profilePath =`${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`; 
-    }
+
+    const profilePath = req.file
+      ? `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`
+      : null;
 
     const student = await Student.create({
       name,
@@ -38,16 +37,17 @@ const studentRegister = async (req, res) => {
       mobile,
       city,
       study,
-      profile :profilePath,
+      profile: profilePath,
       referralCode,
       role,
       attemps,
     });
-   
-    await student.save();
+    const studentObj = student.toObject();
+    delete studentObj.password;
+
     res
       .status(201)
-      .json(new ApiResponse(true, student, "Student Registered Succefully"));
+      .json(new ApiResponse(true, studentObj, "Student Registered Succefully"));
   } catch (error) {
     res.status(500).json(new ApiResponse(false, null, error.message, 500));
   }
@@ -60,7 +60,9 @@ const studentProfileUpload = async (req, res) => {
         .status(400)
         .json(new ApiResponse(false, null, "No file uploaded"));
     }
-    const profilePath = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+    const profilePath = `${req.protocol}://${req.get("host")}/uploads/${
+      req.file.filename
+    }`;
     const student = await Student.findByIdAndUpdate(
       req.decodedUser._id,
       { profile: profilePath },
@@ -88,7 +90,7 @@ const studentProfileUpload = async (req, res) => {
 const studentLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log("login",email)
+   
     const oneStudent = await Student.findOne({ email });
     if (!oneStudent)
       return res
@@ -120,16 +122,18 @@ const studentLogin = async (req, res) => {
   }
 };
 
-const studentLogout = async(req,res)=>{
-  try{
-    res.clearCookie("token",{
-      httpOnly:true,
-      secure:false,
-      sameSite:"None"
+const studentLogout = async (req, res) => {
+  try {
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: false,
+      sameSite: "None",
     });
-      return res.status(200).json(new ApiResponse(true,null,"Logged out successfully"));
-  }catch(error){
-    res.status(500).json(new ApiResponse(false,null,error.message,500))
+    return res
+      .status(200)
+      .json(new ApiResponse(true, null, "Logged out successfully"));
+  } catch (error) {
+    res.status(500).json(new ApiResponse(false, null, error.message, 500));
   }
 };
 
@@ -204,13 +208,28 @@ const studentDeleteById = async (req, res) => {
 
 const studentUpdateById = async (req, res) => {
   try {
-    const updates = req.body;
+    const updates = {};
+    const allowedUpdates = ["name", "email", "mobile", "city", "study"];
+  
+    for (let key of Object.keys(req.body)) {
+      if (allowedUpdates.includes(key)) {
+        updates[key] = req.body[key];
+      }
+    }
+    const isEmpty = (obj) =>Object.keys(obj).length === 0;
+    if (isEmpty(updates)) {
+      return res
+        .status(400)
+        .json(
+          new ApiResponse(false, null, "No fields provided for update", 400)
+        );
+    }
 
     const updated = await Student.findByIdAndUpdate(
       req.params.id,
       { $set: updates },
       { new: true, runValidators: true }
-    );
+    ).lean();
     if (!updated) {
       return res
         .status(404)
@@ -219,7 +238,7 @@ const studentUpdateById = async (req, res) => {
 
     res
       .status(200)
-      .json(new ApiResponse(200, updated, "Student updated Successfully"));
+      .json(new ApiResponse(true, updated, "Student updated Successfully",200));
   } catch (error) {
     res
       .status(500)
@@ -235,5 +254,5 @@ module.exports = {
   studentGetById,
   studentsGetAll,
   studentProfileUpload,
-  studentLogout
+  studentLogout,
 };
