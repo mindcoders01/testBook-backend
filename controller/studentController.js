@@ -17,6 +17,10 @@ const studentGetById = async (req, res) => {
   }
 };
 const studentRegister = async (req, res) => {
+  console.log("studentRegister run...",req.body);
+  console.log("studentRegister run...",req.file);
+
+  let profilePath = `http://localhost:8080/uploads/profile/${req.file.filename}`;
   try {
     const {
       name,
@@ -46,17 +50,17 @@ const studentRegister = async (req, res) => {
       mobile,
       city,
       study,
-      profile,
+      profile: profilePath,
       referralCode,
       role,
       attemps,
     });
-    console.log("running5");
     await student.save();
     res
       .status(201)
-      .json(new ApiResponse(true, student, "Student Registered Succefully"));
+      .json(new ApiResponse(true, student, "Student Registered Successfully"));
   } catch (error) {
+    console.log("Student register err->",error.message)
     res.status(500).json(new ApiResponse(false, null, error.message, 500));
   }
 };
@@ -89,7 +93,7 @@ const studentLogin = async (req, res) => {
 
     return res
       .status(200)
-      .json(new ApiResponse(200, oneStudent, "user loggedIN succefully"));
+      .json(new ApiResponse(200, oneStudent, "user loggedIn successfully"));
   } catch (error) {
     res.status(500).json(new ApiResponse(false, null, error.message, 500));
   }
