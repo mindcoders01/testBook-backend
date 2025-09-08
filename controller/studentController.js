@@ -4,6 +4,10 @@ const ApiResponse = require("../utils/ApiResponse");
 const { generateJwtToken } = require("../config/jwtToken");
 
 const studentRegister = async (req, res) => {
+  console.log("studentRegister run...",req.body);
+  console.log("studentRegister run...",req.file);
+
+  let profilePath = `http://localhost:8080/uploads/profile/${req.file.filename}`;
   try {
     const {
       name,
@@ -38,6 +42,7 @@ const studentRegister = async (req, res) => {
       city,
       study,
       profile: profilePath,
+      profile: profilePath,
       referralCode,
       role,
       attemps,
@@ -49,6 +54,7 @@ const studentRegister = async (req, res) => {
       .status(201)
       .json(new ApiResponse(true, studentObj, "Student Registered Succefully"));
   } catch (error) {
+    console.log("Student register err->",error.message)
     res.status(500).json(new ApiResponse(false, null, error.message, 500));
   }
 };
