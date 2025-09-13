@@ -30,11 +30,13 @@ const { verifyJwtToken } = require("../config/jwtToken");
 const isLoggedIn = async (req, res, next) => {
   try {
     const accessToken = req.cookies?.token;
+    
     if (!accessToken)
       return res
-        .status(404)
-        .json(new ApiResponse(false, null, "User not login,Token not found"));
+    .status(404)
+    .json(new ApiResponse(false, null, "User not login,Token not found"));
     const decodedUser = await verifyJwtToken(accessToken);
+    console.log(decodedUser);
     if (!decodedUser) {
       return res.json(new ApiResponse(false, null, "invalid token"));
     }

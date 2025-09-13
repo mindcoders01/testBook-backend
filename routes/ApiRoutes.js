@@ -8,6 +8,10 @@ const v3Router = require('./v3Router')
 router.use("/v1",v1Router)//public
 router.use("/v2",isLoggedIn,v2Router)
 router.use("/v3",isAdmin,v3Router)
+router.get("/me",isLoggedIn,(req,res)=>{
+    // console.log("meRoute user:", req.decodedUser.name);
+    res.json({user: req.decodedUser })
+})
 
 // router.use("/v4",superAdminCheck,v4Router)
 

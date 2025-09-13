@@ -5,7 +5,6 @@ const cors = require("cors");
 const path = require("path");
 const ApiRoutes = require("./routes/ApiRoutes");
 const { connectDB } = require("./DB/databaseConnection");
-const path = require("path")
 
 // const { uploads } = require("./config/multerConfig");
 

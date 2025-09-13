@@ -117,7 +117,7 @@ const studentLogin = async (req, res) => {
     res.cookie("token", token, {
       httpOnly: true,
       secure: false,
-      sameSite: "None",
+      sameSite: "Lax",
     });
 
     return res
@@ -133,7 +133,7 @@ const studentLogout = async (req, res) => {
     res.clearCookie("token", {
       httpOnly: true,
       secure: false,
-      sameSite: "None",
+      sameSite: "None", 
     });
     return res
       .status(200)
