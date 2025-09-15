@@ -4,10 +4,6 @@ const ApiResponse = require("../utils/ApiResponse");
 const { generateJwtToken } = require("../config/jwtToken");
 
 const studentRegister = async (req, res) => {
-  console.log("studentRegister run...",req.body);
-  console.log("studentRegister run...",req.file);
-
-  let profilePath = `http://localhost:8080/uploads/profile/${req.file.filename}`;
   try {
     const {
       name,
@@ -42,7 +38,6 @@ const studentRegister = async (req, res) => {
       city,
       study,
       profile: profilePath,
-      profile: profilePath,
       referralCode,
       role,
       attemps,
@@ -54,7 +49,6 @@ const studentRegister = async (req, res) => {
       .status(201)
       .json(new ApiResponse(true, studentObj, "Student Registered Succefully"));
   } catch (error) {
-    console.log("Student register err->",error.message)
     res.status(500).json(new ApiResponse(false, null, error.message, 500));
   }
 };
@@ -96,7 +90,7 @@ const studentProfileUpload = async (req, res) => {
 const studentLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
-   
+
     const oneStudent = await Student.findOne({ email });
     if (!oneStudent)
       return res
@@ -133,7 +127,7 @@ const studentLogout = async (req, res) => {
     res.clearCookie("token", {
       httpOnly: true,
       secure: false,
-      sameSite: "None", 
+      sameSite: "None",
     });
     return res
       .status(200)
@@ -216,13 +210,13 @@ const studentUpdateById = async (req, res) => {
   try {
     const updates = {};
     const allowedUpdates = ["name", "email", "mobile", "city", "study"];
-  
+
     for (let key of Object.keys(req.body)) {
       if (allowedUpdates.includes(key)) {
         updates[key] = req.body[key];
       }
     }
-    const isEmpty = (obj) =>Object.keys(obj).length === 0;
+    const isEmpty = (obj) => Object.keys(obj).length === 0;
     if (isEmpty(updates)) {
       return res
         .status(400)
@@ -244,7 +238,9 @@ const studentUpdateById = async (req, res) => {
 
     res
       .status(200)
-      .json(new ApiResponse(true, updated, "Student updated Successfully",200));
+      .json(
+        new ApiResponse(true, updated, "Student updated Successfully", 200)
+      );
   } catch (error) {
     res
       .status(500)
