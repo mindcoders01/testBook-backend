@@ -95,7 +95,7 @@ const studentLogin = async (req, res) => {
     if (!oneStudent)
       return res
         .status(404)
-        .json(new ApiResponse(false, null, "Email Not Exist In DATABASE", 404));
+        .json(new ApiResponse(false, null, "Enter Valid Email", 404));
 
     const isMatch = await oneStudent.comparePassword(password);
 
@@ -116,7 +116,7 @@ const studentLogin = async (req, res) => {
 
     return res
       .status(200)
-      .json(new ApiResponse(200, oneStudent, "user loggedIN succefully"));
+      .json(new ApiResponse(200, oneStudent, "User Logged In Successfully"));
   } catch (error) {
     res.status(500).json(new ApiResponse(false, null, error.message, 500));
   }
@@ -131,7 +131,7 @@ const studentLogout = async (req, res) => {
     });
     return res
       .status(200)
-      .json(new ApiResponse(true, null, "Logged out successfully"));
+      .json(new ApiResponse(true, null, "Logged Out Successfully"));
   } catch (error) {
     res.status(500).json(new ApiResponse(false, null, error.message, 500));
   }
@@ -143,11 +143,11 @@ const studentGetById = async (req, res) => {
     const student = await Student.findById({ _id: id }).select("-password");
     return res
       .status(200)
-      .json(new ApiResponse(true, student, "Succesfully fetched user"));
-  } catch (Error) {
+      .json(new ApiResponse(true, student, "User Fetched Successfully"));
+  } catch (error) {
     return res
       .status(500)
-      .json(new ApiResponse(false, null, "Not Able to fetch Student"));
+      .json(new ApiResponse(false, null, error.message));
   }
 };
 
@@ -182,7 +182,7 @@ const studentsGetAll = async (req, res) => {
     res.set({ "X-Total-Count": total });
     res
       .status(200)
-      .json(new ApiResponse(200, students, "Students successfully fetched"));
+      .json(new ApiResponse(200, students, "Students Successfully fetched"));
   } catch (error) {
     res.status(500).json(new ApiResponse(false, null, error.message, 500));
   }
@@ -202,7 +202,7 @@ const studentDeleteById = async (req, res) => {
   } catch (error) {
     res
       .status(500)
-      .json(new ApiResponse(false, null, "Can't able to delete user", 500));
+      .json(new ApiResponse(false, null, error.message, 500));
   }
 };
 
@@ -221,7 +221,7 @@ const studentUpdateById = async (req, res) => {
       return res
         .status(400)
         .json(
-          new ApiResponse(false, null, "No fields provided for update", 400)
+          new ApiResponse(false, null, "No Fields Provided For Update", 400)
         );
     }
 
@@ -244,7 +244,7 @@ const studentUpdateById = async (req, res) => {
   } catch (error) {
     res
       .status(500)
-      .json(new ApiResponse(false, null, "Can't able to update user", 500));
+      .json(new ApiResponse(false, null, error.message, 500));
   }
 };
 
