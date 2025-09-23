@@ -165,7 +165,7 @@ const studentsGetAll = async (req, res) => {
 
     const select = query.select ? query.select.split(",").join(" ") : null;
     const sort = query.sort ? query.sort.split(",").join(" ") : "-createdAt";
-    console.log("check", skip);
+    
 
     delete query.limit;
     delete query.skip;

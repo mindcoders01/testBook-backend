@@ -1,4 +1,4 @@
-const upload = require("../../config/multerConfig");
+
 const { registerAdmin, loginAdmin } = require("../../controller/adminController");
 const { studentRegister, studentLogin } = require("../../controller/studentController");
 const {uploads} = require("../../config/multerConfig")

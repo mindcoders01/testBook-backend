@@ -3,7 +3,7 @@ const ApiResponse = require("../utils/ApiResponse");
 
 const questionAdd = async (req, res) => {
    
-  let figurePath = `http://localhost:8080/uploads/figure/${req.file.filename}`;
+  let figurePath = req.file?`http://localhost:8080/uploads/figure/${req.file.filename}`:null;
   try {
     const {
       question,
@@ -27,7 +27,7 @@ const questionAdd = async (req, res) => {
       option4,
       answer,
       note,
-      figure,
+      figure:figurePath,
       subject,
       level,
     });

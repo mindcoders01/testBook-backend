@@ -86,7 +86,7 @@ const getAdminDetails = async (req, res) => {
   try {
     console.log("Params id->", id);
     const admin = await AdminModel.findById(id);
-    console.log("get detail", admin);
+    
 
     if (!admin) {
       return res.status(404).json({ message: "Someting went wrong" });
@@ -97,7 +97,7 @@ const getAdminDetails = async (req, res) => {
     res.status(200).json(adminDetals);
   } catch (err) {
     if (err.name === "CastError") {
-      console.error({ Route: "Get Admin err", message: err.name });
+     
       return res.status(400).json({ message: "Invalid ID format" });
     }
     console.error({ Route: "Get Admin err", message: err.message });
