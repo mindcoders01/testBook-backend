@@ -27,7 +27,7 @@ const studentRegister = async (req, res) => {
     }
 
     const profilePath = req.file
-      ? `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`
+      ? `${req.protocol}://${req.get("host")}/uploads/profile/${req.file.filename}`
       : null;
 
     const student = await Student.create({
@@ -145,9 +145,7 @@ const studentGetById = async (req, res) => {
       .status(200)
       .json(new ApiResponse(true, student, "User Fetched Successfully"));
   } catch (error) {
-    return res
-      .status(500)
-      .json(new ApiResponse(false, null, error.message));
+    return res.status(500).json(new ApiResponse(false, null, error.message));
   }
 };
 
@@ -165,7 +163,6 @@ const studentsGetAll = async (req, res) => {
 
     const select = query.select ? query.select.split(",").join(" ") : null;
     const sort = query.sort ? query.sort.split(",").join(" ") : "-createdAt";
-    
 
     delete query.limit;
     delete query.skip;
@@ -200,9 +197,7 @@ const studentDeleteById = async (req, res) => {
       .status(200)
       .json(new ApiResponse(200, deleted, "Student Deleted Successfully"));
   } catch (error) {
-    res
-      .status(500)
-      .json(new ApiResponse(false, null, error.message, 500));
+    res.status(500).json(new ApiResponse(false, null, error.message, 500));
   }
 };
 
@@ -216,6 +211,11 @@ const studentUpdateById = async (req, res) => {
         updates[key] = req.body[key];
       }
     }
+    if(req.file){
+       const profilePath =`${req.protocol}://${req.get("host")}/uploads/profile/${req.file.filename}`
+       updates.profile = profilePath
+    }
+
     const isEmpty = (obj) => Object.keys(obj).length === 0;
     if (isEmpty(updates)) {
       return res
@@ -227,7 +227,7 @@ const studentUpdateById = async (req, res) => {
 
     const updated = await Student.findByIdAndUpdate(
       req.params.id,
-      { $set: updates },
+      { $set:updates },
       { new: true, runValidators: true }
     ).lean();
     if (!updated) {
@@ -242,9 +242,7 @@ const studentUpdateById = async (req, res) => {
         new ApiResponse(true, updated, "Student updated Successfully", 200)
       );
   } catch (error) {
-    res
-      .status(500)
-      .json(new ApiResponse(false, null, error.message, 500));
+    res.status(500).json(new ApiResponse(false, null, error.message, 500));
   }
 };
 

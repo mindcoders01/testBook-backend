@@ -6,7 +6,7 @@ const router = require("express").Router();
 
 
 router.delete('/delete/:id',studentDeleteById)
-router.patch('/update/:id',studentUpdateById)
+router.patch('/update/:id', uploads.single("profile"),studentUpdateById)
 router.patch('/profileImg',uploads.single("profile"),  studentProfileUpload)
 router.post('/logout',studentLogout)
 router.get('/:id',studentGetById)

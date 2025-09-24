@@ -8,7 +8,7 @@ const storage = multer.diskStorage({
 
     let folder = "others";
 
-    if (req.originalUrl.includes("register")) {
+    if (req.originalUrl.includes("student")){
       folder = "profile";
     } else if (req.originalUrl.includes("question")) {
       folder = "figure";
@@ -22,7 +22,7 @@ const storage = multer.diskStorage({
     cb(null, uploadPath); 
   },
   filename: function (req, file, cb) {
-    cb(null, Date.now() + "-" + file.originalname);
+    cb(null, Date.now()+"-"+file.originalname);
   },
 });
 
