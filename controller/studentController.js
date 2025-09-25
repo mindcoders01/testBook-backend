@@ -49,7 +49,7 @@ const studentRegister = async (req, res) => {
       .status(201)
       .json(new ApiResponse(true, studentObj, "Student Registered Succefully"));
   } catch (error) {
-    res.status(500).json(new ApiResponse(false, null, error.message, 500));
+    res.status(500).json(new ApiResponse(false, null, error.message));
   }
 };
 
@@ -95,14 +95,14 @@ const studentLogin = async (req, res) => {
     if (!oneStudent)
       return res
         .status(404)
-        .json(new ApiResponse(false, null, "Enter Valid Email", 404));
+        .json(new ApiResponse(false, null, "Invalid email or password"));
 
     const isMatch = await oneStudent.comparePassword(password);
 
     if (!isMatch)
       return res
         .status(500)
-        .json(new ApiResponse(false, null, "Wrong Password", 500));
+        .json(new ApiResponse(false, null, "Invalid email or password"));
 
     let studentDetails = { ...oneStudent._doc };
     delete studentDetails.password;
@@ -116,9 +116,9 @@ const studentLogin = async (req, res) => {
 
     return res
       .status(200)
-      .json(new ApiResponse(200, oneStudent, "User Logged In Successfully"));
+      .json(new ApiResponse(200, oneStudent, "User Loggedin Successfully"));
   } catch (error) {
-    res.status(500).json(new ApiResponse(false, null, error.message, 500));
+    res.status(500).json(new ApiResponse(false, null, error.message));
   }
 };
 
@@ -133,7 +133,7 @@ const studentLogout = async (req, res) => {
       .status(200)
       .json(new ApiResponse(true, null, "Logged Out Successfully"));
   } catch (error) {
-    res.status(500).json(new ApiResponse(false, null, error.message, 500));
+    res.status(500).json(new ApiResponse(false, null, error.message));
   }
 };
 
@@ -181,7 +181,7 @@ const studentsGetAll = async (req, res) => {
       .status(200)
       .json(new ApiResponse(200, students, "Students Successfully fetched"));
   } catch (error) {
-    res.status(500).json(new ApiResponse(false, null, error.message, 500));
+    res.status(500).json(new ApiResponse(false, null, error.message));
   }
 };
 
@@ -191,13 +191,13 @@ const studentDeleteById = async (req, res) => {
     if (!deleted) {
       return res
         .status(404)
-        .json(new ApiResponse(false, null, "Provide Valid Student Id", 404));
+        .json(new ApiResponse(false, null, "Provide Valid Student Id"));
     }
     res
       .status(200)
       .json(new ApiResponse(200, deleted, "Student Deleted Successfully"));
   } catch (error) {
-    res.status(500).json(new ApiResponse(false, null, error.message, 500));
+    res.status(500).json(new ApiResponse(false, null, error.message));
   }
 };
 
@@ -221,7 +221,7 @@ const studentUpdateById = async (req, res) => {
       return res
         .status(400)
         .json(
-          new ApiResponse(false, null, "No Fields Provided For Update", 400)
+          new ApiResponse(false, null, "No Fields Provided For Update")
         );
     }
 
@@ -233,16 +233,16 @@ const studentUpdateById = async (req, res) => {
     if (!updated) {
       return res
         .status(404)
-        .json(new ApiResponse(false, null, "Provide Valid Student Id", 404));
+        .json(new ApiResponse(false, null, "Provide Valid Student Id"));
     }
 
     res
       .status(200)
       .json(
-        new ApiResponse(true, updated, "Student updated Successfully", 200)
+        new ApiResponse(true, updated, "Student updated Successfully")
       );
   } catch (error) {
-    res.status(500).json(new ApiResponse(false, null, error.message, 500));
+    res.status(500).json(new ApiResponse(false, null, error.message));
   }
 };
 

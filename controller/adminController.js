@@ -3,7 +3,6 @@ const { verifyPassword } = require("../utils/passwordManager");
 
 const AdminModel = require("../model/adminModel");
 
-//Register Controller
 const registerAdmin = async (req, res) => {
   try {
     let { name, email, password, mobile, profile } = req.body;
@@ -58,10 +57,10 @@ const loginAdmin = async (req, res) => {
 
     let findAdmin = await AdminModel.findOne({ email });
     if (!findAdmin)
-      return res.status(404).json({ message: "Someting went wrong" });
-    let validPassword = verifyPassword(password, findAdmin.password);
-    if (!validPassword)
-      return res.status(400).json({ message: "Someting went wrong" });
+      return res.status(404).json({ message: "Invalid email or password" });
+    let validPassword = await verifyPassword(password, findAdmin.password);
+    console.log(validPassword)
+    if (!validPassword) return res.status(400).json({ message:"Invalid email or password" });
     let adminDetails = findAdmin.toObject();
     delete adminDetails.password;
 
