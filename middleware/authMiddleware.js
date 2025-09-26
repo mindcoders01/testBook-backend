@@ -45,6 +45,7 @@ const isLoggedIn = async (req, res, next) => {
 
     next();
   } catch (error) {
+    console.log("Error in isLoggedIn middleware:", error);
     res.status(500).json(new ApiResponse(false, null, error.message));
   }
 };
