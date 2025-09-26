@@ -2,6 +2,7 @@ const { generateJwtToken } = require("../config/jwtToken");
 const { verifyPassword } = require("../utils/passwordManager");
 
 const AdminModel = require("../model/adminModel");
+const ApiResponse = require("../utils/ApiResponse");
 
 const registerAdmin = async (req, res) => {
   try {
@@ -68,14 +69,14 @@ const loginAdmin = async (req, res) => {
     res.cookie("token", token, {
       httpOnly: true,
       secure: false,
-      sameSite: "None",
+      sameSite: "Lax",
       maxAge: 24 * 60 * 60 * 1000,
     });
+          return res.status(200).json(new ApiResponse(200,adminDetails,`Admin Login Successfuly`))
+  
 
-    res.status(202).json({ message: `Login Successfuly ${findAdmin.name}` });
-  } catch (err) {
-    console.error({ Route: "Login err", message: err.message });
-    res.status(500).json({ Route: "Login err", message: err.message });
+  } catch (error) {
+   return  res.status(500).json(new ApiResponse(false,null,error.message))
   }
 };
 

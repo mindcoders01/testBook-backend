@@ -118,7 +118,7 @@ const studentLogin = async (req, res) => {
       .status(200)
       .json(new ApiResponse(200, oneStudent, "User Loggedin Successfully"));
   } catch (error) {
-    res.status(500).json(new ApiResponse(false, null, error.message));
+    return  res.status(500).json(new ApiResponse(false, null, error.message));
   }
 };
 
@@ -127,13 +127,13 @@ const studentLogout = async (req, res) => {
     res.clearCookie("token", {
       httpOnly: true,
       secure: false,
-      sameSite: "None",
+      sameSite: "Lax",
     });
     return res
       .status(200)
       .json(new ApiResponse(true, null, "Logged Out Successfully"));
   } catch (error) {
-    res.status(500).json(new ApiResponse(false, null, error.message));
+   return res.status(500).json(new ApiResponse(false, null, error.message));
   }
 };
 
@@ -181,7 +181,7 @@ const studentsGetAll = async (req, res) => {
       .status(200)
       .json(new ApiResponse(200, students, "Students Successfully fetched"));
   } catch (error) {
-    res.status(500).json(new ApiResponse(false, null, error.message));
+    return  res.status(500).json(new ApiResponse(false, null, error.message));
   }
 };
 
