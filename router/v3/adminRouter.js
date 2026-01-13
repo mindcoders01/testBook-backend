@@ -1,6 +1,5 @@
 const express = require('express');
 const { getAdminDetails, updateAdminDetails, deleteAdminInfo } = require('../../controller/adminController');
-
 const router = express.Router()
 
 
